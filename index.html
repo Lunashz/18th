@@ -464,20 +464,20 @@
             flex-shrink: 0;
         }
 
-        /* SCROLLABLE GALLERY GRID */
+        /* FIXED: Scrollable gallery grid with constant image sizes */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 150px);
             gap: 12px;
-            width: 100%;
+            justify-content: center;
             overflow-y: auto;
-            max-height: 60vh;
-            padding-right: 8px;
+            max-height: 55vh;
+            padding: 8px;
         }
 
         .gallery-grid::-webkit-scrollbar {
             width: 8px;
-        }
+        }	
 
         .gallery-grid::-webkit-scrollbar-track {
             background: var(--pink-lightest);
@@ -493,8 +493,10 @@
             background: var(--pink-medium);
         }
 
+        /* FIXED: Constant size gallery items */
         .gallery-item {
-            aspect-ratio: 1;
+            width: 155px;
+            height: 155px;
             border-radius: 15px;
             overflow: hidden;
             border: 3px solid var(--pink-light);
@@ -503,6 +505,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .gallery-item:hover {
@@ -707,7 +710,14 @@
             .love-letter { padding: 2rem 1.5rem; margin: 1rem; }
             .letter-content { font-size: 1.2rem; }
             .bunny-decor { font-size: 1.5rem; }
-            .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .gallery-grid { 
+                grid-template-columns: repeat(3, 90px); 
+                gap: 8px; 
+            }
+            .gallery-item {
+                width: 90px;
+                height: 90px;
+            }
         }
 
         .confetti {
@@ -730,21 +740,20 @@
     <div class="gallery-overlay" id="galleryOverlay">
         <div class="gallery-content">
             <button class="close-modal" id="closeGallery" aria-label="Close gallery">×</button>
-            <h2 class="gallery-title">📸 Sweet Memories 📸</h2>
+            <h2 class="gallery-title">📸 Photos 📸</h2>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <!-- Example image -->
-                    <img src=picture1.jpg alt="Memory 1">
+                    <img src="picture1.jpg" alt="Memory 1">
                 </div>
                 <div class="gallery-item">
                     <img src="2.jpg" alt="Memory 2">
                 </div>
+				<div class="gallery-item">
+				    <img src="3.jpg" alt="Memory3">
+				</div>
                 <div class="gallery-item">
-                    <img src="3A.jpg" alt="Memory 3">
+                    <img src="3A.jpg" alt="Memory 4">
                 </div>
-                <div class="gallery-item">
-                    <img src="3.jpg" alt="Memory 4">
-                     </div>
                 <div class="gallery-item">
                     <img src="4.jpg" alt="Memory 5">
                 </div>
@@ -753,7 +762,8 @@
                 </div>
                 <div class="gallery-item">
                     <img src="7.jpg" alt="Memory 7">
-                     <div class="gallery-item">
+                </div>
+                <div class="gallery-item">
                     <img src="8.jpg" alt="Memory 8">
                 </div>
             </div>
@@ -789,13 +799,13 @@
         </section>
 
         <section class="birthday-section" id="birthdaySection">
-            <h1 class="birthday-title">🎉 Happy 18th Birthday, my bunny! 🎉</h1>
+            <h1 class="birthday-title">🎉 HAPPY 18TH BIRTHDAYYY! 🎉</h1>
             <p class="birthday-subtitle" id="birthdayMessage">Wishing you the most magical day ever! ✨</p>
             
             <div class="audio-container">
                 <p class="audio-label">🎵 Play Your Birthday Song 🎵</p>
                 <audio controls id="birthdayAudio">
-                    <source src="" type="audio/mpeg">
+                    <source src=".m4a" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>
@@ -875,16 +885,15 @@
         const prevImage = document.getElementById('prevImage');
         const nextImage = document.getElementById('nextImage');
         
-        // Gallery images array
-        const galleryImages = [
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=800&fit=crop',
-            'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&h=800&fit=crop',
-            'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&h=800&fit=crop',
-            'https://images.unsplash.com/photo-1464349153735-7db50ed83c84?w=800&h=800&fit=crop',
-            'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&h=800&fit=crop',
-            'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&h=800&fit=crop'
-        ];
+        // Gallery images array - update these with your actual image paths
+        let galleryImages = [];
         let currentImageIndex = 0;
+
+        // Collect all gallery images dynamically
+        function initGalleryImages() {
+            const imgs = document.querySelectorAll('.gallery-item img');
+            galleryImages = Array.from(imgs).map(img => img.src);
+        }
 
         const particleEmojis = ['💖', '💕', '✨', '💗', '🌸', '💝', '⭐', '🎀'];
         
@@ -978,6 +987,7 @@
         });
 
         galleryBunny.addEventListener('click', () => {
+            initGalleryImages();
             galleryOverlay.classList.add('visible');
             document.body.style.overflow = 'hidden';
         });
@@ -995,8 +1005,6 @@
         });
 
         // Enlarged image functionality
-        const galleryItems = document.querySelectorAll('.gallery-item img');
-        
         function openEnlargedImage(index) {
             currentImageIndex = index;
             enlargedImage.src = galleryImages[index];
@@ -1017,8 +1025,12 @@
             enlargedImage.src = galleryImages[currentImageIndex];
         }
 
-        galleryItems.forEach((img, index) => {
-            img.addEventListener('click', () => openEnlargedImage(index));
+        // Add click listeners to gallery images
+        document.querySelectorAll('.gallery-item img').forEach((img, index) => {
+            img.addEventListener('click', () => {
+                initGalleryImages();
+                openEnlargedImage(index);
+            });
         });
 
         closeEnlarged.addEventListener('click', closeEnlargedImage);
@@ -1071,6 +1083,4 @@
         for (let i = 0; i < 5; i++) setTimeout(createParticle, i * 500);
     </script>
 </body>
-
 </html>
-
